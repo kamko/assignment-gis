@@ -1,21 +1,24 @@
 <template>
     <div id="app" class="container-fluid h-100">
         <div class="row h-100">
-            <div class="col-2"></div>
+            <div class="col-2">
+                <Menu/>
+            </div>
             <div class="col-10">
-                <leaflet-map/>
+                <LeafletMap/>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import LeafletMap from './components/LeafletMap.vue'
+    import {Menu, LeafletMap} from './components'
 
     export default {
         name: 'app',
         components: {
-            LeafletMap
+            LeafletMap,
+            Menu
         }
     }
 </script>
