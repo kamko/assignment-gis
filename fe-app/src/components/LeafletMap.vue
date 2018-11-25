@@ -1,24 +1,34 @@
 <template>
     <l-map
             :zoom="zoom"
-            :center="center">
+            :center="center"
+            @click="putMarker">
         <l-tile-layer
                 :url="url"
                 :attribution="attribution"/>
+        <l-marker v-if="marker.lat && marker.lng"
+                  :lat-lng="[marker.lat, marker.lng]"
+                  @click="removeMarker"/>
+        />
     </l-map>
 </template>
 
 <script>
     import {
         LMap,
-        LTileLayer
+        LTileLayer,
+        LGeoJson,
+        LMarker
     } from 'vue2-leaflet';
+    import {mapGetters} from 'vuex';
 
     export default {
         name: 'LeafletMap',
         components: {
             LMap,
             LTileLayer,
+            LGeoJson,
+            LMarker
         },
         props: {
             zoom: {
@@ -37,6 +47,17 @@
                 type: String,
                 default: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>'
             }
+        },
+        methods: {
+            putMarker(event) {
+                this.$store.commit('setMarker', {...event.latlng})
+            },
+            removeMarker() {
+                this.$store.commit('setMarker', {})
+            }
+        },
+        computed: {
+            ...mapGetters(['marker'])
         }
     }
 </script>

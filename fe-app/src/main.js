@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { L } from 'vue2-leaflet';
+import {L} from 'vue2-leaflet';
+import store from './store';
 import BootstrapVue from 'bootstrap-vue';
 
 import 'bootstrap/dist/css/bootstrap.css';
@@ -19,5 +20,6 @@ L.Icon.Default.mergeOptions({
 });
 
 new Vue({
-  render: h => h(App),
+    store,
+    render: h => h(App),
 }).$mount('#app');
