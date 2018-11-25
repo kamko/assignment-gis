@@ -9,7 +9,6 @@
         <l-marker v-if="marker.lat && marker.lng"
                   :lat-lng="[marker.lat, marker.lng]"
                   @click="removeMarker"/>
-        />
     </l-map>
 </template>
 

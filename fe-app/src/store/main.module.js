@@ -2,7 +2,8 @@ const state = {
     marker: {
         lat: undefined,
         lng: undefined
-    }
+    },
+    hlohovec: undefined
 };
 
 const getters = {
@@ -11,8 +12,7 @@ const getters = {
     }
 };
 
-const actions = {
-};
+const actions = {};
 
 const mutations = {
     setMarker(state, {lat, lng}) {
