@@ -5,7 +5,8 @@
                 <Menu/>
             </div>
             <div class="col-10">
-                <LeafletMap/>
+                <LeafletMap
+                :center="[48.139309, 17.098169]"/>
             </div>
         </div>
     </div>

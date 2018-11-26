@@ -36,7 +36,7 @@
             },
             center: {
                 type: Array,
-                default: () => [48.139309, 17.098169]
+                default: () => [1, 1]
             },
             url: {
                 type: String,
