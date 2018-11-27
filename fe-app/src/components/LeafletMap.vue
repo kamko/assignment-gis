@@ -9,6 +9,13 @@
         <l-marker v-if="marker.lat && marker.lng"
                   :lat-lng="[marker.lat, marker.lng]"
                   @click="removeMarker"/>
+        <l-geo-json
+                v-if="Object.keys(churchData).length"
+                :geojson="churchData"
+                :options="churchOptions"/>
+        <l-geo-json
+                v-if="Object.keys(town).length"
+                :geojson="town"/>
     </l-map>
 </template>
 
@@ -29,10 +36,20 @@
             LGeoJson,
             LMarker
         },
+        data() {
+            return {
+                churchOptions: {
+                    onEachFeature: (feature, layer) => {
+                        console.log(feature, layer);
+                        layer.bindPopup("<p>Popup</p>");
+                    }
+                }
+            }
+        },
         props: {
             zoom: {
                 type: Number,
-                default: 5
+                default: 15
             },
             center: {
                 type: Array,
@@ -49,14 +66,15 @@
         },
         methods: {
             putMarker(event) {
-                this.$store.commit('setMarker', {...event.latlng})
+                this.$store.commit('setMarker', {...event.latlng});
+                this.$store.dispatch('fetchTown', {...event.latlng});
             },
             removeMarker() {
                 this.$store.commit('setMarker', {})
             }
         },
         computed: {
-            ...mapGetters(['marker'])
+            ...mapGetters(['marker', 'churchData', 'town'])
         }
     }
 </script>
