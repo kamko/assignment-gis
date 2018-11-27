@@ -5,7 +5,7 @@ const state = {
         lat: undefined,
         lng: undefined
     },
-    churchData: undefined,
+    worshipPlaces: undefined,
     town: undefined
 };
 
@@ -13,8 +13,8 @@ const getters = {
     marker(state) {
         return {...state.marker}
     },
-    churchData(state) {
-        return {...state.churchData}
+    worshipPlaces(state) {
+        return {...state.worshipPlaces}
     },
     town(state) {
         return {...state.town}
@@ -22,13 +22,13 @@ const getters = {
 };
 
 const actions = {
-    fetchChurchData({commit}, {uid}) {
+    fetchWorshipData({commit}, {uid}) {
         console.log(`fetchChurchData (uid=${uid})`);
-        axios.get('http://localhost:8081/churches', {
+        axios.get('http://localhost:8081/worshipPlaces', {
                 params: {uid}
             }
         ).then((res) => {
-                commit('setChurchData', res.data)
+                commit('setWorshipData', res.data)
             });
     },
     fetchTown({commit, dispatch}, {lat, lng}) {
@@ -39,9 +39,8 @@ const actions = {
                 }
             }
         ).then((res) => {
-            console.log(res);
             commit('setTown', res.data);
-            dispatch('fetchChurchData', {uid: res.data.id})
+            dispatch('fetchWorshipData', {uid: res.data.id})
         });
     }
 };
@@ -52,8 +51,8 @@ const mutations = {
             state.marker.lat = lat;
             state.marker.lng = lng;
         },
-        setChurchData(state, data) {
-            state.churchData = data;
+        setWorshipData(state, data) {
+            state.worshipPlaces = data;
         },
         setTown(state, data) {
             state.town = data;

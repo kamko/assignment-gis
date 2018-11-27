@@ -1,10 +1,7 @@
 <template>
     <div>
         <h4>{{ type }} ({{ denomination}})</h4>
-        <ul>
-            <li>Name: {{ name }}</li>
-            <li>Area: {{ area }} m2</li>
-        </ul>
+        Name: {{ name }}
     </div>
 </template>
 

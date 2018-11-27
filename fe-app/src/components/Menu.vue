@@ -14,7 +14,7 @@
         comments: {},
         methods: {
             fetchChurches() {
-                this.$store.dispatch('fetchChurchData');
+                this.$store.dispatch('fetchWorshipData');
             }
         },
         computed: {...mapGetters(['marker'])}

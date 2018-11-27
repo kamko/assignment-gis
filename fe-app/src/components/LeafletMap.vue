@@ -10,9 +10,9 @@
                   :lat-lng="[marker.lat, marker.lng]"
                   @click="removeMarker"/>
         <l-geo-json
-                v-if="Object.keys(churchData).length"
-                :geojson="churchData"
-                :options="churchOptions"/>
+                v-if="Object.keys(worshipPlaces).length"
+                :geojson="worshipPlaces"
+                :options="worshipOptions"/>
         <l-geo-json
                 v-if="Object.keys(town).length"
                 :geojson="town"
@@ -36,7 +36,17 @@
         },
         data() {
             return {
-                churchOptions: {
+                worshipOptions: {
+                    pointToLayer: (feature, latlng) => {
+                        return L.marker(latlng, {
+                            icon: L.icon({
+                                iconUrl: 'https://i.imgur.com/YK0PVMf.png',
+                                iconSize: [35, 35],
+                                iconAnchor: [15, 25],
+                                popupAnchor: [0, -30]
+                            })
+                        });
+                    },
                     onEachFeature: (feature, layer) => {
                         let Popup = Vue.extend(ChurchPopup);
                         let popup = new Popup({
@@ -44,7 +54,6 @@
                                 type: feature.properties.religion,
                                 denomination: feature.properties.denomination,
                                 name: feature.properties.name,
-                                area: -1
                             }
                         });
                         layer.bindPopup(popup.$mount().$el);
@@ -86,7 +95,7 @@
             }
         },
         computed: {
-            ...mapGetters(['marker', 'churchData', 'town'])
+            ...mapGetters(['marker', 'worshipPlaces', 'town'])
         }
     }
 </script>
