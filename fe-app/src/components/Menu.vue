@@ -1,27 +1,42 @@
 <template>
     <div>
-        <!--<div class="row" v-if="Object.keys(marker.lat).length && Object.keys(marker.lng).length">-->
-            <!--Selected town: {{ town.properties.name }} <br>-->
-            <!--Lat: {{ marker.lat.toFixed(5) }} <br>-->
-            <!--Lng: {{ marker.lng.toFixed(5) }} <br>-->
-        <!--</div>-->
+        <div class="row" v-if="marker.lat && marker.lng">
+                <div class="col-6">Lat: {{ marker.lat.toFixed(5) }}</div>
+                <div class="col-6">Lng: {{ marker.lng.toFixed(5) }}</div>
+        </div>
         <div class="row mt-3 justify-content-center">
             <p>Scenario: {{ scenario }}</p> <br>
         </div>
-        <div class="row justify-content-center">
-            <div class="custom-control custom-radio">
-                <input type="button" value="town" @click="selectScenario">
+        <div class="row">
+            <div class="col-12 btn-group d-flex mb-3" role="group">
+                <button type="button" class="btn w-100" value="town" @click="selectScenario"
+                        v-bind:class="buttonClasses('town')" :disabled="scenario === 'town'">Town
+                </button>
+                <button type="button" class="btn w-100" value="nearby" @click="selectScenario"
+                        v-bind:class="buttonClasses('nearby')" :disabled="scenario === 'nearby'">Nearby
+                </button>
+                <button type="button" class="btn w-100" value="treti" @click="selectScenario"
+                        v-bind:class="buttonClasses('treti')" :disabled="scenario === 'treti'">Tretiii
+                </button>
             </div>
-            <div class="custom-control custom-radio">
-                <input type="button" value="nearby" @click="selectScenario">
+        </div>
+
+        <div class="row" v-if="scenario === 'town' && Object.keys(town).length">
+            <div class="col-12">
+                <h5>{{ town.properties.name }}</h5>
             </div>
         </div>
 
         <div class="row" v-if="scenario === 'nearby'">
-            <label for="range">Selected range: {{ this.rangeValue }}</label>
-            <input type="range" class="custom-range" min="50" max="5000" id="range" :value=rangeValue
-                   @mouseup="showNearby">
+            <div class="col-12">
+                <label class="w-100" for="range">Selected range: {{ this.rangeValue }}</label>
+            </div>
+            <div class="col-12">
+                <input type="range" class="custom-range w-100" min="50" max="5000" id="range" :value=rangeValue
+                       @mouseup="showNearby">
+            </div>
         </div>
+
     </div>
 </template>
 
@@ -32,6 +47,12 @@
         name: 'Menu',
         comments: {},
         methods: {
+            buttonClasses(scenario) {
+                return {
+                    'btn-success': this.scenario === scenario,
+                    'btn-outline-danger': this.scenario !== scenario
+                }
+            },
             selectScenario(event) {
                 this.$store.dispatch('selectScenario', event.target.value)
             },
@@ -42,3 +63,6 @@
         computed: {...mapGetters(['marker', 'town', 'scenario', 'rangeValue'])}
     }
 </script>
+
+<style scoped>
+</style>

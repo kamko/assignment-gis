@@ -50,7 +50,10 @@ const actions = {
             }
         ).then((res) => {
             commit('setTown', res.data);
-            dispatch('fetchWorshipData', {uid: res.data.id})
+
+            if (Object.keys(res.data).length) {
+                dispatch('fetchWorshipData', {uid: res.data.id})
+            }
         });
     },
 
@@ -67,8 +70,10 @@ const actions = {
             commit('setWorshipData', res.data)
         });
     },
-    runCommand({state, dispatch}) {
+    runCommand({state, commit, dispatch}) {
         console.log('runCommand', state.scenario);
+        commit('clearMap');
+
         switch (state.scenario) {
             case 'town':
                 dispatch('fetchTown', {...state.marker});
