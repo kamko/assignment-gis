@@ -58,10 +58,9 @@
                         switch (this.religions.selected) {
                             case 'All':
                                 return true;
-                            case 'Unknown':
+                            case 'unknown':
                                 if (fReligion === null) {
                                     return true;
-
                                 }
                                 break;
                             default:

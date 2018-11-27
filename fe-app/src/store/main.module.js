@@ -56,7 +56,6 @@ const actions = {
             commit('setWorshipData', res.data)
         });
     },
-
     fetchTown({commit, dispatch}, {lat, lng}) {
         console.log(`fetchTown (lat=${lat}, lng=${lng})`);
         axios.get('http://localhost:8081/town', {
@@ -72,7 +71,6 @@ const actions = {
             }
         });
     },
-
     fetchNearbyPlaces({commit}, {lat, lng, range}) {
         console.log(`fetchNearbyPlaces (lat=${lat}, lng=${lng}, range=${range})`);
         commit('setRange', range);
@@ -107,33 +105,33 @@ const actions = {
         }
         dispatch('runCommand', scenario)
     },
-    setSelectedReligion({commit, dispatch}, value) {
+    setSelectedReligion({commit, state, dispatch}, value) {
         commit('setSelectedReligion', value);
-        dispatch('runCommand');
+        commit('setWorshipData', {...state.worshipPlaces});
     }
 };
 
 const mutations = {
-        setMarker(state, {lat, lng}) {
-            console.log(`setMarker([${lat}, ${lng}])`);
-            state.marker.lat = lat;
-            state.marker.lng = lng;
-        },
-        setWorshipData(state, data) {
-            state.worshipPlaces = data;
-        },
-        setTown(state, data) {
-            state.town = data;
-        },
-        clearMap(state) {
-            state.worshipPlaces = {};
-        },
-        selectScenario(state, value) {
-            state.scenario = value;
-        },
-        setRange(state, value) {
-            state.rangeValue = value;
-        },
+    setMarker(state, {lat, lng}) {
+        console.log(`setMarker([${lat}, ${lng}])`);
+        state.marker.lat = lat;
+        state.marker.lng = lng;
+    },
+    setWorshipData(state, data) {
+        state.worshipPlaces = data;
+    },
+    setTown(state, data) {
+        state.town = data;
+    },
+    clearMap(state) {
+        state.worshipPlaces = {};
+    },
+    selectScenario(state, value) {
+        state.scenario = value;
+    },
+    setRange(state, value) {
+        state.rangeValue = value;
+    },
     setReligions(state, value) {
         state.religions.data = value;
         state.religions.selected = value[0];
@@ -141,8 +139,7 @@ const mutations = {
     setSelectedReligion(staet, value) {
         state.religions.selected = value;
     }
-    }
-;
+};
 
 export default {
     state,
