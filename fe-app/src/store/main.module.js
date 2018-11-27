@@ -8,7 +8,11 @@ const state = {
     },
     worshipPlaces: {},
     town: {},
-    rangeValue: 50
+    rangeValue: 50,
+    religions: {
+        selected: undefined,
+        data: undefined
+    }
 };
 
 const getters = {
@@ -26,10 +30,22 @@ const getters = {
     },
     rangeValue(state) {
         return parseInt(state.rangeValue)
+    },
+    religions(state) {
+        return state.religions;
     }
 };
 
 const actions = {
+    fetchReligions({commit}) {
+        console.log(`fetchReligions`);
+        axios.get('http://localhost:8081/religions')
+            .then((res) => {
+                let data = res.data;
+                data.unshift('All');
+                commit('setReligions', data)
+            });
+    },
     fetchWorshipData({commit}, {uid}) {
         console.log(`fetchWorshipData (uid=${uid})`);
         axios.get('http://localhost:8081/worshipPlaces', {
@@ -90,6 +106,10 @@ const actions = {
             commit('setTown', {});
         }
         dispatch('runCommand', scenario)
+    },
+    setSelectedReligion({commit, dispatch}, value) {
+        commit('setSelectedReligion', value);
+        dispatch('runCommand');
     }
 };
 
@@ -113,7 +133,14 @@ const mutations = {
         },
         setRange(state, value) {
             state.rangeValue = value;
-        }
+        },
+    setReligions(state, value) {
+        state.religions.data = value;
+        state.religions.selected = value[0];
+    },
+    setSelectedReligion(staet, value) {
+        state.religions.selected = value;
+    }
     }
 ;
 

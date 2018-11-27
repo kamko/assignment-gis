@@ -83,8 +83,19 @@ const nearbyWorshipPlaces = ({lng, lat, range}) => new Promise((resolve) =>
         })
 );
 
+const religions = () => new Promise((resolve) =>
+    pool.query(`SELECT DISTINCT coalesce(religion, 'unknown') as religion
+                FROM worship_places;`)
+        .then(data => {
+            console.log(`Fetching religions`, data);
+            resolve(data.rows)
+        })
+        .catch(err => resolve([]))
+);
+
 export {
     worshipPlaces,
     findTown,
-    nearbyWorshipPlaces
+    nearbyWorshipPlaces,
+    religions
 };

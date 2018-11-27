@@ -53,6 +53,21 @@
                             })
                         });
                     },
+                    filter: (feature) => {
+                        const fReligion = feature.properties.religion;
+                        switch (this.religions.selected) {
+                            case 'All':
+                                return true;
+                            case 'Unknown':
+                                if (fReligion === null) {
+                                    return true;
+
+                                }
+                                break;
+                            default:
+                                return fReligion === this.religions.selected;
+                        }
+                    },
                     onEachFeature: (feature, layer) => {
                         let Popup = Vue.extend(ChurchPopup);
                         let popup = new Popup({
@@ -66,6 +81,9 @@
                     }
                 }
             }
+        },
+        created() {
+            this.$store.dispatch('fetchReligions');
         },
         props: {
             zoom: {
@@ -99,7 +117,7 @@
             }
         },
         computed: {
-            ...mapGetters(['marker', 'worshipPlaces', 'town', 'scenario', 'rangeValue'])
+            ...mapGetters(['marker', 'worshipPlaces', 'town', 'scenario', 'rangeValue', 'religions'])
         }
     }
 </script>

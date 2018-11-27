@@ -1,8 +1,14 @@
 <template>
     <div>
         <div class="row" v-if="marker.lat && marker.lng">
-                <div class="col-6">Lat: {{ marker.lat.toFixed(5) }}</div>
-                <div class="col-6">Lng: {{ marker.lng.toFixed(5) }}</div>
+            <div class="col-6">Lat: {{ marker.lat.toFixed(5) }}</div>
+            <div class="col-6">Lng: {{ marker.lng.toFixed(5) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <label>Religion</label>
+                <b-form-select :options="religions.data" @change="selectValue"/>
+            </div>
         </div>
         <div class="row mt-3 justify-content-center">
             <p>Scenario: {{ scenario }}</p> <br>
@@ -42,9 +48,13 @@
 
 <script>
     import {mapGetters} from 'vuex';
+    import {FormSelect} from 'bootstrap-vue/es/components'
 
     export default {
         name: 'Menu',
+        components: {
+            FormSelect
+        },
         comments: {},
         methods: {
             buttonClasses(scenario) {
@@ -58,9 +68,12 @@
             },
             showNearby(event) {
                 this.$store.dispatch('fetchNearbyPlaces', {...this.marker, range: parseInt(event.target.value)});
+            },
+            selectValue(event) {
+                this.$store.dispatch('setSelectedReligion', event)
             }
         },
-        computed: {...mapGetters(['marker', 'town', 'scenario', 'rangeValue'])}
+        computed: {...mapGetters(['marker', 'town', 'scenario', 'rangeValue', 'religions'])}
     }
 </script>
 
