@@ -6,23 +6,27 @@
         <l-tile-layer
                 :url="url"
                 :attribution="attribution"/>
+
         <l-marker v-if="marker.lat && marker.lng"
-                  :lat-lng="[marker.lat, marker.lng]"
-                  @click="removeMarker"/>
+                  :lat-lng="[marker.lat, marker.lng]"/>
         <l-geo-json
-                v-if="Object.keys(worshipPlaces).length"
+                v-if="worshipPlaces.features"
                 :geojson="worshipPlaces"
                 :options="worshipOptions"/>
         <l-geo-json
                 v-if="Object.keys(town).length"
                 :geojson="town"
                 :optionsStyle="townStyle"/>
+        <l-circle
+                v-if="scenario === 'nearby' && marker.lat && marker.lng"
+                :lat-lng="[marker.lat, marker.lng]"
+                :radius="rangeValue"/>
     </l-map>
 </template>
 
 <script>
     import Vue from 'vue';
-    import {LGeoJson, LMap, LMarker, LTileLayer} from 'vue2-leaflet';
+    import {LGeoJson, LMap, LMarker, LTileLayer, LCircle} from 'vue2-leaflet';
     import ChurchPopup from './ChurchPopup'
     import {mapGetters} from 'vuex';
 
@@ -32,7 +36,8 @@
             LMap,
             LTileLayer,
             LGeoJson,
-            LMarker
+            LMarker,
+            LCircle
         },
         data() {
             return {
@@ -81,11 +86,9 @@
         },
         methods: {
             putMarker(event) {
+                console.log(this.scenario);
                 this.$store.commit('setMarker', {...event.latlng});
-                this.$store.dispatch('fetchTown', {...event.latlng});
-            },
-            removeMarker() {
-                this.$store.commit('setMarker', {})
+                this.$store.dispatch('runCommand');
             },
             townStyle(feature) {
                 return {
@@ -95,7 +98,7 @@
             }
         },
         computed: {
-            ...mapGetters(['marker', 'worshipPlaces', 'town'])
+            ...mapGetters(['marker', 'worshipPlaces', 'town', 'scenario', 'rangeValue'])
         }
     }
 </script>
