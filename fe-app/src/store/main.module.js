@@ -22,13 +22,17 @@ const getters = {
 };
 
 const actions = {
-    fetchChurchData({commit}) {
-        axios.get('http://localhost:8081/')
-            .then((res) => {
+    fetchChurchData({commit}, {uid}) {
+        console.log(`fetchChurchData (uid=${uid})`);
+        axios.get('http://localhost:8081/churches', {
+                params: {uid}
+            }
+        ).then((res) => {
                 commit('setChurchData', res.data)
             });
     },
-    fetchTown({commit}, {lat, lng}) {
+    fetchTown({commit, dispatch}, {lat, lng}) {
+        console.log(`fetchTown (lat=${lat}, lng=${lng})`);
         axios.get('http://localhost:8081/town', {
                 params: {
                     lat, lng
@@ -36,7 +40,8 @@ const actions = {
             }
         ).then((res) => {
             console.log(res);
-            commit('setTown', res.data)
+            commit('setTown', res.data);
+            dispatch('fetchChurchData', {uid: res.data.id})
         });
     }
 };

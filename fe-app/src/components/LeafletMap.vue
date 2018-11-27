@@ -15,17 +15,13 @@
                 :options="churchOptions"/>
         <l-geo-json
                 v-if="Object.keys(town).length"
-                :geojson="town"/>
+                :geojson="town"
+                :optionsStyle="townStyle"/>
     </l-map>
 </template>
 
 <script>
-    import {
-        LMap,
-        LTileLayer,
-        LGeoJson,
-        LMarker
-    } from 'vue2-leaflet';
+    import {LGeoJson, LMap, LMarker, LTileLayer} from 'vue2-leaflet';
     import {mapGetters} from 'vuex';
 
     export default {
@@ -71,6 +67,12 @@
             },
             removeMarker() {
                 this.$store.commit('setMarker', {})
+            },
+            townStyle(feature) {
+                return {
+                    color: "#ff003a",
+                    fillOpacity: 0
+                }
             }
         },
         computed: {
