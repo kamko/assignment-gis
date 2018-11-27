@@ -21,7 +21,9 @@
 </template>
 
 <script>
+    import Vue from 'vue';
     import {LGeoJson, LMap, LMarker, LTileLayer} from 'vue2-leaflet';
+    import ChurchPopup from './ChurchPopup'
     import {mapGetters} from 'vuex';
 
     export default {
@@ -36,8 +38,16 @@
             return {
                 churchOptions: {
                     onEachFeature: (feature, layer) => {
-                        console.log(feature, layer);
-                        layer.bindPopup("<p>Popup</p>");
+                        let Popup = Vue.extend(ChurchPopup);
+                        let popup = new Popup({
+                            propsData: {
+                                type: feature.properties.religion,
+                                denomination: feature.properties.denomination,
+                                name: feature.properties.name,
+                                area: -1
+                            }
+                        });
+                        layer.bindPopup(popup.$mount().$el);
                     }
                 }
             }
