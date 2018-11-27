@@ -107,7 +107,6 @@ const mutations = {
         },
         clearMap(state) {
             state.worshipPlaces = {};
-            state.rangeValue = 500;
         },
         selectScenario(state, value) {
             state.scenario = value;

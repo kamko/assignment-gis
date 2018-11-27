@@ -20,7 +20,8 @@
         <l-circle
                 v-if="scenario === 'nearby' && marker.lat && marker.lng"
                 :lat-lng="[marker.lat, marker.lng]"
-                :radius="rangeValue"/>
+                :radius="rangeValue"
+                color="#ff003a" fillColor="#ff003a" fillOpacity="0.15"/>
     </l-map>
 </template>
 
