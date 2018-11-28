@@ -10,9 +10,7 @@
                 <b-form-select :options="religions.data" @change="selectValue"/>
             </div>
         </div>
-        <div class="row mt-3 justify-content-center">
-            <p>Scenario: {{ scenario }}</p> <br>
-        </div>
+
         <div class="row">
             <div class="col-12 btn-group d-flex mb-3" role="group">
                 <button type="button" class="btn w-100" value="town" @click="selectScenario"
@@ -38,7 +36,7 @@
                 <label class="w-100" for="range">Selected range: {{ this.rangeValue }}</label>
             </div>
             <div class="col-12">
-                <input type="range" class="custom-range w-100" min="50" max="5000" id="range" :value=rangeValue
+                <input type="range" class="custom-range w-100" min="50" max="10000" id="range" :value=rangeValue
                        @mouseup="showNearby">
             </div>
         </div>

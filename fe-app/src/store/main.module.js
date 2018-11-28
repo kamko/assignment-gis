@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+const SERVER_URI = 'http://localhost:8081';
+
 const state = {
     scenario: "town",
     marker: {
@@ -39,7 +41,7 @@ const getters = {
 const actions = {
     fetchReligions({commit}) {
         console.log(`fetchReligions`);
-        axios.get('http://localhost:8081/religions')
+        axios.get(`${SERVER_URI}/religions`)
             .then((res) => {
                 let data = res.data;
                 data.unshift('All');
@@ -48,7 +50,7 @@ const actions = {
     },
     fetchWorshipData({commit}, {uid}) {
         console.log(`fetchWorshipData (uid=${uid})`);
-        axios.get('http://localhost:8081/worshipPlaces', {
+        axios.get(`${SERVER_URI}/worshipPlaces`, {
                 params: {uid}
             }
         ).then((res) => {
@@ -58,7 +60,7 @@ const actions = {
     },
     fetchTown({commit, dispatch}, {lat, lng}) {
         console.log(`fetchTown (lat=${lat}, lng=${lng})`);
-        axios.get('http://localhost:8081/town', {
+        axios.get(`${SERVER_URI}/town`, {
                 params: {
                     lat, lng
                 }
@@ -74,7 +76,7 @@ const actions = {
     fetchNearbyPlaces({commit}, {lat, lng, range}) {
         console.log(`fetchNearbyPlaces (lat=${lat}, lng=${lng}, range=${range})`);
         commit('setRange', range);
-        axios.get('http://localhost:8081/nearby', {
+        axios.get(`${SERVER_URI}/nearby`, {
                 params: {
                     lat, lng, range
                 }
