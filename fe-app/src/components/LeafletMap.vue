@@ -17,6 +17,10 @@
                 v-if="Object.keys(town).length"
                 :geojson="town"
                 :optionsStyle="townStyle"/>
+        <l-geo-json
+                v-if="Object.keys(roads).length"
+                :geojson="roads"
+        />
         <l-circle
                 v-if="scenario === 'nearby' && marker.lat && marker.lng"
                 :lat-lng="[marker.lat, marker.lng]"
@@ -74,6 +78,7 @@
                                 type: feature.properties.religion,
                                 denomination: feature.properties.denomination,
                                 name: feature.properties.name,
+                                building: feature.properties.building
                             }
                         });
                         layer.bindPopup(popup.$mount().$el);
@@ -116,7 +121,7 @@
             }
         },
         computed: {
-            ...mapGetters(['marker', 'worshipPlaces', 'town', 'scenario', 'rangeValue', 'religions'])
+            ...mapGetters(['marker', 'worshipPlaces', 'town', 'scenario', 'rangeValue', 'religions', 'roads'])
         }
     }
 </script>

@@ -10,6 +10,7 @@ const state = {
     },
     worshipPlaces: {},
     town: {},
+    roads: {},
     rangeValue: 50,
     religions: {
         selected: undefined,
@@ -35,6 +36,9 @@ const getters = {
     },
     religions(state) {
         return state.religions;
+    },
+    roads(state) {
+        return state.roads;
     }
 };
 
@@ -96,6 +100,8 @@ const actions = {
                 break;
             case 'nearby':
                 dispatch('fetchNearbyPlaces', {...state.marker, range: state.rangeValue});
+                break;
+            case 'roads':
                 break
         }
     },
@@ -110,6 +116,18 @@ const actions = {
     setSelectedReligion({commit, state, dispatch}, value) {
         commit('setSelectedReligion', value);
         commit('setWorshipData', {...state.worshipPlaces});
+    },
+    fetchRoads({commit, state}) {
+        axios.get(`${SERVER_URI}/roads`, {
+                params: {
+                    ...state.marker
+                }
+            }
+        ).then(res => {
+                console.log('roads:', res.data);
+                commit('setRoads', res.data)
+            }
+        )
     }
 };
 
@@ -138,8 +156,11 @@ const mutations = {
         state.religions.data = value;
         state.religions.selected = value[0];
     },
-    setSelectedReligion(staet, value) {
+    setSelectedReligion(state, value) {
         state.religions.selected = value;
+    },
+    setRoads(state, value) {
+        state.roads = value;
     }
 };
 

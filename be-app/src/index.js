@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const process = require('process');
 const cors = require('cors');
-import {findTown, nearbyWorshipPlaces, religions, worshipPlaces} from './service/db';
+import {findTown, nearbyWorshipPlaces, religions, roads, worshipPlaces} from './service/db';
 
 const app = express();
 app.use(cors());
@@ -25,7 +25,6 @@ app.get('/town', (req, res) => {
 });
 
 app.get('/nearby', (req, res) => {
-
     nearbyWorshipPlaces({
         lng: req.query.lng,
         lat: req.query.lat,
@@ -35,6 +34,13 @@ app.get('/nearby', (req, res) => {
 
 app.get('/religions', (req, res) => {
     religions().then(data => res.json(data.map(i => i.religion)))
+});
+
+app.get('/roads', (req, res) => {
+    roads({
+        lng: req.query.lng,
+        lat: req.query.lat
+    }).then(data => res.json(data));
 });
 
 

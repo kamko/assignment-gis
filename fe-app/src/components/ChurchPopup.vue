@@ -1,7 +1,10 @@
 <template>
     <div>
-        <h4>{{ type }} ({{ denomination}})</h4>
-        Name: {{ name }}
+        <h4>{{ type }} {{ denomination}}</h4>
+        <ul>
+            <li>Name: {{ name }}</li>
+            <li>Building: {{ building }}</li>
+        </ul>
     </div>
 </template>
 
@@ -24,6 +27,10 @@
             area: {
                 type: Number,
                 default: 0
+            },
+            building: {
+                type: String,
+                default: ''
             }
         }
     };
