@@ -151,7 +151,7 @@ CREATE INDEX planet_osm_line_waterway_nn_idx ON planet_osm_line (waterway) WHERE
                    )
           FROM data) features;
     ```
-- **GET /waterways - (query_param = lat, lng), returns geojson containing nearest waterway (max distance is 15km)
+- **GET /waterways** - (query_param = lat, lng), returns geojson containing nearest waterway (max distance is 15km)
 ```sql
 WITH data as (WITH
   rivers as (SELECT name, way FROM planet_osm_line WHERE waterway IS NOT NULL),
