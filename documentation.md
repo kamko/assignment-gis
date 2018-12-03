@@ -5,15 +5,17 @@ For every displayed place of worship you can filter showed points by religion. A
 
 Switching between action modes is accomplished using 2 buttons in the sidebar.
 ## UC 1
-By clicking on any spot on map you will be showed border of town which contains the point and all places of worship in this town.
+By clicking on any spot on map you will be showed border of the town which contains the point and then all places of worship in this town.
 
 ![uc1-prague](uc1.png)
+![uc1-kezmarok](uc1_2.png)
+
 ## UC 2
-After choosing this use case you'll see an circle with all worship places which are in distance smaller than selected radius (from 50 to 10000 metres).
+After choosing this option you can see an circle with all worship places which are in distance smaller than selected radius (from 50 to 10000 metres). This distance is adjustable with displayed slider.
 
 ![uc2-kezmarok](uc2.png)
 ## UC 3
-After selecting any place of worship, you can find nearest waterway.
+After selecting any place of worship, you can find the nearest waterway by clicking on the button in the popup.
 
 ![uc3-kezmarok](uc3.png)
 
@@ -98,7 +100,7 @@ To obtain a lot better performance we did some optimizations of the data.
     ```
 
 ## Api
-- **GET /worshipPlaces** (query_param = town_id), returns geojson containing all worship palces in selected town
+- **GET /worshipPlaces** (query_param = town_id), returns geojson containing all worship places in selected town
     ```sql
     WITH town as (SELECT name, way
                   FROM planet_osm_polygon
@@ -113,7 +115,7 @@ To obtain a lot better performance we did some optimizations of the data.
         ) as geojson
     FROM (SELECT jsonb_build_object(
                      'type', 'Feature',
-                     'geometry', st_asgeojson(st_centroid(way))::jsonb,
+                     'geometry', st_asgeojson(way)::jsonb,
                      'properties',
                      (SELECT row_to_json(_) FROM (SELECT data.name, data.religion, data.building, data.denomination) as _)
                    )
@@ -145,7 +147,7 @@ To obtain a lot better performance we did some optimizations of the data.
         ) as geojson
     FROM (SELECT jsonb_build_object(
                      'type', 'Feature',
-                     'geometry', st_asgeojson(st_centroid(way))::jsonb,
+                     'geometry', st_asgeojson(way)::jsonb,
                      'properties',
                      (SELECT row_to_json(_) FROM (SELECT data.name, data.religion, data.building, data.denomination) as _)
                    )
@@ -156,11 +158,11 @@ To obtain a lot better performance we did some optimizations of the data.
     WITH data as (WITH
       rivers as (SELECT name, way FROM planet_osm_line WHERE waterway IS NOT NULL),
       my_point as (SELECT st_setsrid(st_makepoint($1, $2), 4326) as point)
-      SELECT r.name, r.way, st_distance(way::geography, point) dist
+      SELECT r.name, r.way, st_distance(way::geography, point) distance
       FROM rivers r,
            my_point
       WHERE st_dwithin(way::geography, point, 15000)
-      ORDER BY dist ASC
+      ORDER BY distance ASC
       LIMIT 1
     )
     SELECT
@@ -172,7 +174,7 @@ To obtain a lot better performance we did some optimizations of the data.
                      'type', 'Feature',
                      'geometry', st_asgeojson(way)::jsonb,
                      'properties',
-                     (SELECT row_to_json(_) FROM (SELECT data.name) as _)
+                     (SELECT row_to_json(_) FROM (SELECT data.name, data.distance) as _)
                    )
           FROM data) features;
     ```

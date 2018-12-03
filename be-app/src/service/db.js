@@ -41,7 +41,7 @@ SELECT
     ) as geojson
 FROM (SELECT jsonb_build_object(
                  'type', 'Feature',
-                 'geometry', st_asgeojson(st_centroid(way))::jsonb,
+                 'geometry', st_asgeojson(way)::jsonb,
                  'properties', (SELECT row_to_json(_) FROM (SELECT data.name, data.religion, data.building, data.denomination) as _)
                )
       FROM data) features;`
@@ -68,7 +68,7 @@ const nearbyWorshipPlaces = ({lng, lat, range}) => new Promise((resolve) =>
                 ) as geojson
             FROM (SELECT jsonb_build_object(
                              'type', 'Feature',
-                             'geometry', st_asgeojson(st_centroid(way))::jsonb,
+                             'geometry', st_asgeojson(way)::jsonb,
                              'properties', (SELECT row_to_json(_) FROM (SELECT data.name, data.religion, data.building, data.denomination) as _)
                            )
                   FROM data) features;`
