@@ -3,7 +3,7 @@ This application allow users to find a very good '[place_of_worship](https://wik
 
 For every displayed place of worship you can filter showed points by religion. After clicking on any point you'll see more information about the place (religion, denomination, building type - if this information is known).
 
-Switching between action modes is accomplished using 3 buttons in the sidebar.
+Switching between action modes is accomplished using 2 buttons in the sidebar.
 ## UC 1
 By clicking on any spot on map you will be showed border of town which contains the point and all places of worship in this town.
 
@@ -59,7 +59,7 @@ To obtain a lot better performance we did some optimizations of the data.
     CREATE INDEX polygon_uid_idx ON planet_osm_polygon(uid);
     ```
 
-3. Places of worship as points**
+3. **Places of worship as points**
     To simplify queries for places of worship we transformed all polygons (eg. church area) to points and merged (union) it with all chapels and other non-polygon places.
     ```sql
     CREATE OR REPLACE VIEW worship_places AS (
