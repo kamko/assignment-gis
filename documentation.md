@@ -92,10 +92,10 @@ To obtain a lot better performance we did some optimizations of the data.
      CREATE INDEX planet_osm_polygon_centroid_idx ON planet_osm_polygon USING GIST (st_centroid(way));
      ```
 4. **Waterway indexes**
-```sql
-CREATE INDEX planet_osm_line_river_buffer_idx ON planet_osm_line USING GIST (st_buffer(way::geography, 150)) WHERE waterway IS NOT NULL;
-CREATE INDEX planet_osm_line_waterway_nn_idx ON planet_osm_line (waterway) WHERE waterway IS NOT NULL;
-```
+    ```sql
+    CREATE INDEX planet_osm_line_river_buffer_idx ON planet_osm_line USING GIST (st_buffer(way::geography, 150)) WHERE waterway IS NOT NULL;
+    CREATE INDEX planet_osm_line_waterway_nn_idx ON planet_osm_line (waterway) WHERE waterway IS NOT NULL;
+    ```
 
 ## Api
 - **GET /worshipPlaces** (query_param = town_id), returns geojson containing all worship palces in selected town

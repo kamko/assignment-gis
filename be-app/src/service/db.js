@@ -98,11 +98,11 @@ const waterways = ({lng, lat}) => new Promise((resolve) =>
             `WITH data as (WITH
               rivers as (SELECT name, way FROM planet_osm_line WHERE waterway IS NOT NULL),
               my_point as (SELECT st_setsrid(st_makepoint($1, $2), 4326) as point)
-              SELECT r.name, r.way, st_distance(way::geography, point) dist
+              SELECT r.name, r.way, st_distance(way::geography, point) distance
               FROM rivers r,
                    my_point
               WHERE st_dwithin(way::geography, point, 15000)
-              ORDER BY dist ASC
+              ORDER BY distance ASC
               LIMIT 1
             )
             SELECT
@@ -114,7 +114,7 @@ const waterways = ({lng, lat}) => new Promise((resolve) =>
                              'type', 'Feature',
                              'geometry', st_asgeojson(way)::jsonb,
                              'properties',
-                             (SELECT row_to_json(_) FROM (SELECT data.name) as _)
+                             (SELECT row_to_json(_) FROM (SELECT data.name, data.distance) as _)
                            )
                   FROM data) features;`, [lng, lat]
         ).then(res => {

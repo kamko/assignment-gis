@@ -90,7 +90,7 @@
                 },
                 waterOptions: {
                     onEachFeature: (feature, layer) => {
-                        layer.bindPopup(`<b>River: ${feature.properties.name}</b>`);
+                        layer.bindPopup(`<b>River: ${feature.properties.name}, distance = ${feature.properties.distance} metres</b>`);
                     }
                 }
             }
