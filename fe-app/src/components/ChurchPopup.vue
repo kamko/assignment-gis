@@ -5,6 +5,7 @@
             <li>Name: {{ name }}</li>
             <li>Building: {{ building }}</li>
         </ul>
+        <button class="btn btn-primary" @click="showWaterway">Show nearest waterway</button>
     </div>
 </template>
 
@@ -31,6 +32,19 @@
             building: {
                 type: String,
                 default: ''
+            },
+            lat: {
+                type: Number,
+                default: 0
+            },
+            lng: {
+                type: Number,
+                default: 0
+            }
+        },
+        methods: {
+            showWaterway(event) {
+                this.$store.dispatch('fetchWaterway', {lat: this.lat, lng: this.lng})
             }
         }
     };

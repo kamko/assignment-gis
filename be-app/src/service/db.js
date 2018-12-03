@@ -93,34 +93,30 @@ const religions = () => new Promise((resolve) =>
         .catch(err => resolve([]))
 );
 
-const roads = ({lng, lat}) => new Promise((resolve) =>
+const waterways = ({lng, lat}) => new Promise((resolve) =>
         pool.query(
-            `WITH data as (
-  WITH area as (SELECT *
-              FROM cz_sk_towns
-              WHERE st_within(st_setsrid(st_makepoint($1, $2), 4326), way) LIMIT 1)
-      ,roads as (
-      SELECT line.name, st_intersection(line.way, area.way) as way
-      FROM planet_osm_line line,
-           (SELECT way FROM area) as area
-      WHERE highway IS NOT NULL
-        AND st_intersects(line.way, area.way))
-      SELECT name, st_collectionextract(st_collect(way), 2) as way
-      FROM roads
-      GROUP BY name
-  )
-  SELECT
-    jsonb_build_object(
-        'type', 'FeatureCollection',
-        'features', jsonb_agg(features.jsonb_build_object)
-      ) as geojson
-  FROM (SELECT jsonb_build_object(
-                   'type', 'Feature',
-                   'geometry', st_asgeojson(way)::jsonb,
-                   'properties', (SELECT row_to_json(_) FROM (SELECT data.name) as _)
-                 )
-        FROM data
-        WHERE name IS NOT NULL) features;`, [lng, lat]
+            `WITH data as (WITH
+              rivers as (SELECT name, way FROM planet_osm_line WHERE waterway IS NOT NULL),
+              my_point as (SELECT st_setsrid(st_makepoint($1, $2), 4326) as point)
+              SELECT r.name, r.way, st_distance(way::geography, point) dist
+              FROM rivers r,
+                   my_point
+              WHERE st_dwithin(way::geography, point, 15000)
+              ORDER BY dist ASC
+              LIMIT 1
+            )
+            SELECT
+              jsonb_build_object(
+                  'type', 'FeatureCollection',
+                  'features', jsonb_agg(features.jsonb_build_object)
+                ) as geojson
+            FROM (SELECT jsonb_build_object(
+                             'type', 'Feature',
+                             'geometry', st_asgeojson(way)::jsonb,
+                             'properties',
+                             (SELECT row_to_json(_) FROM (SELECT data.name) as _)
+                           )
+                  FROM data) features;`, [lng, lat]
         ).then(res => {
             console.log(`roads: ${lat} ${lng}`);
             resolve(res.rows[0].geojson)
@@ -136,5 +132,5 @@ export {
     findTown,
     nearbyWorshipPlaces,
     religions,
-    roads
+    waterways
 };

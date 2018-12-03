@@ -10,7 +10,7 @@ const state = {
     },
     worshipPlaces: {},
     town: {},
-    roads: {},
+    waterway: {},
     rangeValue: 50,
     religions: {
         selected: undefined,
@@ -37,8 +37,8 @@ const getters = {
     religions(state) {
         return state.religions;
     },
-    roads(state) {
-        return state.roads;
+    waterway(state) {
+        return state.waterway;
     }
 };
 
@@ -101,8 +101,6 @@ const actions = {
             case 'nearby':
                 dispatch('fetchNearbyPlaces', {...state.marker, range: state.rangeValue});
                 break;
-            case 'roads':
-                break
         }
     },
     selectScenario({scenario, commit, dispatch}, value) {
@@ -117,15 +115,13 @@ const actions = {
         commit('setSelectedReligion', value);
         commit('setWorshipData', {...state.worshipPlaces});
     },
-    fetchRoads({commit, state}) {
-        axios.get(`${SERVER_URI}/roads`, {
-                params: {
-                    ...state.marker
-                }
+    fetchWaterway({commit, state}, {lat, lng}) {
+        axios.get(`${SERVER_URI}/waterways`, {
+            params: {lat, lng}
             }
         ).then(res => {
-                console.log('roads:', res.data);
-                commit('setRoads', res.data)
+            console.log('waterway:', res.data);
+            commit('setWaterway', res.data)
             }
         )
     }
@@ -145,6 +141,7 @@ const mutations = {
     },
     clearMap(state) {
         state.worshipPlaces = {};
+        state.waterway = {};
     },
     selectScenario(state, value) {
         state.scenario = value;
@@ -159,8 +156,8 @@ const mutations = {
     setSelectedReligion(state, value) {
         state.religions.selected = value;
     },
-    setRoads(state, value) {
-        state.roads = value;
+    setWaterway(state, value) {
+        state.waterway = value;
     }
 };
 

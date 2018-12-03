@@ -19,9 +19,6 @@
                 <button type="button" class="btn w-100" value="nearby" @click="selectScenario"
                         v-bind:class="buttonClasses('nearby')" :disabled="scenario === 'nearby'">Nearby
                 </button>
-                <button type="button" class="btn w-100" value="roads" @click="selectScenario"
-                        v-bind:class="buttonClasses('roads')" :disabled="scenario === 'roads'">Roads
-                </button>
             </div>
         </div>
 
@@ -40,14 +37,8 @@
                        @mouseup="showNearby">
             </div>
         </div>
-
-        <div class="row" v-if="scenario === 'roads'">
-            <div class="col-12">
-                <button @click="showRoads">Klikaj tutaj</button>
-            </div>
-        </div>
-
     </div>
+
 </template>
 
 <script>
@@ -75,9 +66,6 @@
             },
             selectValue(event) {
                 this.$store.dispatch('setSelectedReligion', event)
-            },
-            showRoads(event) {
-                this.$store.dispatch('fetchRoads', event)
             }
         },
         computed: {...mapGetters(['marker', 'town', 'scenario', 'rangeValue', 'religions'])}

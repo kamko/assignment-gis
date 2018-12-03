@@ -14,18 +14,19 @@
                 :geojson="worshipPlaces"
                 :options="worshipOptions"/>
         <l-geo-json
-                v-if="Object.keys(town).length"
-                :geojson="town"
-                :optionsStyle="townStyle"/>
-        <l-geo-json
-                v-if="Object.keys(roads).length"
-                :geojson="roads"
-        />
+                v-if="Object.keys(waterway).length"
+                :geojson="waterway"
+                :options="waterOptions"
+                :optionsStyle="waterStyle"/>
         <l-circle
                 v-if="scenario === 'nearby' && marker.lat && marker.lng"
                 :lat-lng="[marker.lat, marker.lng]"
                 :radius="rangeValue"
-                color="#ff003a" fillColor="#ff003a" fillOpacity="0.15"/>
+                color="#ff003a" fillColor="#ff003a" fillOpacity="0.10"/>
+        <l-geo-json
+                v-if="Object.keys(town).length"
+                :geojson="town"
+                :optionsStyle="townStyle"/>
     </l-map>
 </template>
 
@@ -74,14 +75,22 @@
                     onEachFeature: (feature, layer) => {
                         let Popup = Vue.extend(ChurchPopup);
                         let popup = new Popup({
+                            store: this.$store,
                             propsData: {
                                 type: feature.properties.religion,
                                 denomination: feature.properties.denomination,
                                 name: feature.properties.name,
-                                building: feature.properties.building
+                                building: feature.properties.building,
+                                lat: feature.geometry.coordinates[1],
+                                lng: feature.geometry.coordinates[0]
                             }
                         });
                         layer.bindPopup(popup.$mount().$el);
+                    }
+                },
+                waterOptions: {
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup(`<b>River: ${feature.properties.name}</b>`);
                     }
                 }
             }
@@ -118,10 +127,20 @@
                     color: "#ff003a",
                     fillOpacity: 0
                 }
+            },
+            waterStyle(feature) {
+                return {
+                    color: "#00ff1d",
+                    weight: 10
+                }
+            },
+            setSelectedChurch(event) {
+                console.log('tutaj:', event);
+                this.$store.commit('setSelected', {...event.latlng});
             }
         },
         computed: {
-            ...mapGetters(['marker', 'worshipPlaces', 'town', 'scenario', 'rangeValue', 'religions', 'roads'])
+            ...mapGetters(['marker', 'worshipPlaces', 'town', 'scenario', 'rangeValue', 'religions', 'waterway'])
         }
     }
 </script>
