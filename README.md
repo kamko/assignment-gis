@@ -18,10 +18,10 @@ Build a map-based application, which lets the user see geo-based data on a map a
 
 ## My project
 
-Fill in (either in English, or in Slovak):
+**Application description**: Clever application which allows user to find place of worship for his religion in selected town.
 
-**Application description**: `<fill in>`
+**Data source**: OpenStreetMap (Slovakia + Czechia export)
 
-**Data source**: `<fill in>`
+**Technologies used**: Vue.js, Express, Node.js, Leaflet, Mapbox
 
-**Technologies used**: `<fill in>`
+[**Documentation**](documentation.md)

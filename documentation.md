@@ -1,15 +1,22 @@
 # Overview - Kamil Janeček
-This application allow users to find a very good '[place_of_worship](https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dplace_of_worship)'. User can choose to see all places in a town or in radius around point on map (e.g. i want to find nearest jewish synagogue from my position). Or ... tu dopis treti scenar more ... After fetching all places you can filter them based on religion (if known).
+This application allow users to find a very good '[place_of_worship](https://wiki.openstreetmap.org/wiki/Tag:amenity%3Dplace_of_worship)'. User can choose to see all places in a town or in radius around point on map (e.g. i want to find nearest jewish synagogue from my position). And best feature is that you can find nearest waterway (max 15km) from selected place! After fetching all places you can filter them based on religion (if known).
 
 For every displayed place of worship you can filter showed points by religion. After clicking on any point you'll see more information about the place (religion, denomination, building type - if this information is known).
 
 Switching between action modes is accomplished using 3 buttons in the sidebar.
 ## UC 1
 By clicking on any spot on map you will be showed border of town which contains the point and all places of worship in this town.
+
+![uc1-prague](uc1.png)
 ## UC 2
-After choosing this use case you'll see an circle with all worship places which are in distance smaller than selected radius (from 50 to 5000 metres).
+After choosing this use case you'll see an circle with all worship places which are in distance smaller than selected radius (from 50 to 10000 metres).
+
+![uc2-kezmarok](uc2.png)
 ## UC 3
-- neexist
+After selecting any place of worship, you can find nearest waterway.
+
+![uc3-kezmarok](uc3.png)
+
 # Frontend
 Client application is implemented using [Vue](https://vuejs.org/) framework. Map is displayed thanks to javascript library [Leaflet](https://leafletjs.com/). Leaflet integration into Vue components was accomplished by using [Vue2Leaflet](https://github.com/KoRiGaN/Vue2Leaflet). Map tiles are fetched from mapbox with custom style (we changed buildings color to highlight them on the map). [Template](https://api.mapbox.com/styles/v1/kamko/cjox8h8161xh92snhft6q1at3.html?fresh=true&title=true&access_token=pk.eyJ1Ijoia2Fta28iLCJhIjoiY2pvd3RjcXNnMHN1NTNsbnl0eHg5dmlpZCJ9.nks03xACHawGHjfqtvkSTA#15.7/48.141591/17.107276/0) is publicly available.
 # Backend
@@ -84,6 +91,11 @@ To obtain a lot better performance we did some optimizations of the data.
      CREATE INDEX polygon_amenity_idx ON planet_osm_polygon (amenity);
      CREATE INDEX planet_osm_polygon_centroid_idx ON planet_osm_polygon USING GIST (st_centroid(way));
      ```
+4. **Waterway indexes**
+```sql
+CREATE INDEX planet_osm_line_river_buffer_idx ON planet_osm_line USING GIST (st_buffer(way::geography, 150)) WHERE waterway IS NOT NULL;
+CREATE INDEX planet_osm_line_waterway_nn_idx ON planet_osm_line (waterway) WHERE waterway IS NOT NULL;
+```
 
 ## Api
 - **GET /worshipPlaces** (query_param = town_id), returns geojson containing all worship palces in selected town
@@ -139,7 +151,33 @@ To obtain a lot better performance we did some optimizations of the data.
                    )
           FROM data) features;
     ```
+- **GET /waterways - (query_param = lat, lng), returns geojson containing nearest waterway (max distance is 15km)
+```sql
+WITH data as (WITH
+  rivers as (SELECT name, way FROM planet_osm_line WHERE waterway IS NOT NULL),
+  my_point as (SELECT st_setsrid(st_makepoint($1, $2), 4326) as point)
+  SELECT r.name, r.way, st_distance(way::geography, point) dist
+  FROM rivers r,
+       my_point
+  WHERE st_dwithin(way::geography, point, 15000)
+  ORDER BY dist ASC
+  LIMIT 1
+)
+SELECT
+  jsonb_build_object(
+      'type', 'FeatureCollection',
+      'features', jsonb_agg(features.jsonb_build_object)
+    ) as geojson
+FROM (SELECT jsonb_build_object(
+                 'type', 'Feature',
+                 'geometry', st_asgeojson(way)::jsonb,
+                 'properties',
+                 (SELECT row_to_json(_) FROM (SELECT data.name) as _)
+               )
+      FROM data) features;
+```
 - **GET /religions** - returns list of all existing religions (in current dataset)
+
 
 ### Response
 All responses with geodata are GeoJson FeatureCollections (except Town thats only one feature) objects created in database.
@@ -154,7 +192,7 @@ SELECT
     ) as geojson
 FROM (SELECT jsonb_build_object(
                  'type', 'Feature',
-                 'geometry', st_asgeojson(st_centroid(way))::jsonb,
+                 'geometry', st_asgeojson(way)::jsonb,
                  'properties',
                  (SELECT row_to_json(_) FROM (SELECT data.column_name) as _) -- you can add properties with correct names to final geojson
                )
