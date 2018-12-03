@@ -152,30 +152,30 @@ CREATE INDEX planet_osm_line_waterway_nn_idx ON planet_osm_line (waterway) WHERE
           FROM data) features;
     ```
 - **GET /waterways** - (query_param = lat, lng), returns geojson containing nearest waterway (max distance is 15km)
-```sql
-WITH data as (WITH
-  rivers as (SELECT name, way FROM planet_osm_line WHERE waterway IS NOT NULL),
-  my_point as (SELECT st_setsrid(st_makepoint($1, $2), 4326) as point)
-  SELECT r.name, r.way, st_distance(way::geography, point) dist
-  FROM rivers r,
-       my_point
-  WHERE st_dwithin(way::geography, point, 15000)
-  ORDER BY dist ASC
-  LIMIT 1
-)
-SELECT
-  jsonb_build_object(
-      'type', 'FeatureCollection',
-      'features', jsonb_agg(features.jsonb_build_object)
-    ) as geojson
-FROM (SELECT jsonb_build_object(
-                 'type', 'Feature',
-                 'geometry', st_asgeojson(way)::jsonb,
-                 'properties',
-                 (SELECT row_to_json(_) FROM (SELECT data.name) as _)
-               )
-      FROM data) features;
-```
+    ```sql
+    WITH data as (WITH
+      rivers as (SELECT name, way FROM planet_osm_line WHERE waterway IS NOT NULL),
+      my_point as (SELECT st_setsrid(st_makepoint($1, $2), 4326) as point)
+      SELECT r.name, r.way, st_distance(way::geography, point) dist
+      FROM rivers r,
+           my_point
+      WHERE st_dwithin(way::geography, point, 15000)
+      ORDER BY dist ASC
+      LIMIT 1
+    )
+    SELECT
+      jsonb_build_object(
+          'type', 'FeatureCollection',
+          'features', jsonb_agg(features.jsonb_build_object)
+        ) as geojson
+    FROM (SELECT jsonb_build_object(
+                     'type', 'Feature',
+                     'geometry', st_asgeojson(way)::jsonb,
+                     'properties',
+                     (SELECT row_to_json(_) FROM (SELECT data.name) as _)
+                   )
+          FROM data) features;
+    ```
 - **GET /religions** - returns list of all existing religions (in current dataset)
 
 
